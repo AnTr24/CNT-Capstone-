@@ -12,7 +12,7 @@ using System.IO.Ports;
 // 
 namespace ReactionTimeTester
 {
-    public partial class Form1 : Form
+    public partial class Form_Main : Form
     {
         delegate void SerialDataReceivedEventHandlerDel(object sender, SerialDataReceivedEventArgs e);
         delegate void SetTextCallback(string text);
@@ -21,7 +21,7 @@ namespace ReactionTimeTester
 
         string dataReceived = "";
 
-        public Form1()
+        public Form_Main()
         {
             InitializeComponent();
             sPort.DataReceived += new SerialDataReceivedEventHandler(serialPort_DataReceive);
@@ -48,7 +48,12 @@ namespace ReactionTimeTester
 
         private void OutputText(string t)
         {
-            rtbOut.Text += t;
+            // rtbOut.Text += t;
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
