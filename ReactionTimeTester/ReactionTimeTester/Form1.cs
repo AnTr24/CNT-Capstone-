@@ -17,26 +17,23 @@ namespace ReactionTimeTester
         delegate void SerialDataReceivedEventHandlerDel(object sender, SerialDataReceivedEventArgs e);
         delegate void SetTextCallback(string text);
 
-        SerialPort sPort = new SerialPort();
+        public static SerialPort sPort { get; set; }
+
+
 
         string dataReceived = "";
 
         public Form_Main()
         {
             InitializeComponent();
+            sPort = new SerialPort();
             sPort.DataReceived += new SerialDataReceivedEventHandler(serialPort_DataReceive);
-            Settings();
+
         }
 
-        private void Settings()
+        private void Form1_Load(object sender, EventArgs e)
         {
-            sPort.PortName = "COM1";
-            sPort.BaudRate = 19200;
-            sPort.DataBits = 8;
-            sPort.StopBits = StopBits.One;
-            sPort.Handshake = Handshake.None;
-            sPort.Parity = Parity.None;
-            sPort.Open();
+
         }
 
         private void serialPort_DataReceive(object sender, SerialDataReceivedEventArgs e)
@@ -51,9 +48,10 @@ namespace ReactionTimeTester
             // rtbOut.Text += t;
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void _btnConfig_Click(object sender, EventArgs e)
         {
-
+            Form_Config FormConfig = new Form_Config();
+            FormConfig.Show();
         }
     }
 }
