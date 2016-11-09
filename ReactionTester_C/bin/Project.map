@@ -1,5 +1,5 @@
 *** EVALUATION ***
-PROGRAM "E:\CMPE2960 - Capstone Project\ReactionTester\bin\Project.abs"
+PROGRAM "C:\Users\yli121\Documents\GitHub\CNT-Capstone-\ReactionTester_C\bin\Project.abs"
 
 *********************************************************************************************
 TARGET SECTION
@@ -1416,20 +1416,20 @@ MODULE:                 -- main.c.o --
      strT3                                     2119       A      10       1   .data       
      strAvg                                    2123       A      10       1   .data       
      TOFCount                                  2131       2       2       4   .bss        
-     btn                                       2133       1       1       3   .bss        
-     testStart                                 2134       1       1       2   .bss        
-     tests                                     2135       1       1       6   .bss        
-     rTimeT1                                   2136       4       4       6   .bss        
-     rTimeT2                                   213A       4       4       6   .bss        
-     rTimeT3                                   213E       4       4       6   .bss        
-     average                                   2142       4       4       8   .bss        
+     tests                                     2133       1       1       6   .bss        
+     rTimeT1                                   2134       4       4       6   .bss        
+     rTimeT2                                   2138       4       4       6   .bss        
+     rTimeT3                                   213C       4       4       6   .bss        
+     average                                   2140       4       4       8   .bss        
+     btn                                       2144       1       1       3   .bss        
+     testStart                                 2145       1       1       2   .bss        
      _Vector_24                                FFCE       2       2       0   .abs_section_ffce
      _Vector_8                                 FFEE       2       2       0   .abs_section_ffee
      randTim                                   214C       2       2       1   .common     
-     timeStart                                 214E       2       2       3   .common     
-     timeStop                                  2150       2       2       3   .common     
-     rTime                                     2152       4       4       9   .common     
-     randLightOn                               2156       2       2       3   .common     
+     randLightOn                               214E       2       2       3   .common     
+     timeStart                                 2150       2       2       3   .common     
+     timeStop                                  2152       2       2       3   .common     
+     rTime                                     2154       4       4       9   .common     
      s                                         2158      14      20      11   .common     
 MODULE:                 -- Start12.c.o --
 - PROCEDURES:
@@ -1649,7 +1649,7 @@ SECTION: ".text"
 SECTION: ".data"
   tTests newLine strT1 strT2 strT3 strAvg seed 
 SECTION: ".bss"
-  TOFCount btn testStart tests rTimeT1 rTimeT2 rTimeT3 average pbuf 
+  TOFCount tests rTimeT1 rTimeT2 rTimeT3 average btn testStart pbuf 
 SECTION: ".init"
   Init _Startup 
 SECTION: ".rodata"
@@ -2961,7 +2961,7 @@ SECTION: ".abs_section_ffce"
 SECTION: ".abs_section_ffee"
   _Vector_8 
 SECTION: ".common"
-  randTim timeStart timeStop rTime randLightOn s 
+  randTim randLightOn timeStart timeStop rTime s 
 SECTION: "RUNTIME"
   D_ADDKL _DADD _DSUB _DNEG D_FREXP frexp _DCMP D_TOLONGK D_FRLONGK _DUFLOAT 
   _DSTRUNC _DUTRUNC D_PSHK_UNARY D_CLRK_UNARY D_MAXK_UNARY D_NORMK_UNARY D_FRFK 
@@ -3630,19 +3630,19 @@ OBJECT LIST SORTED BY ADDRESS
      strAvg                                    2123       A      10       1   .data       
      seed                                      212D       4       4      15   .data       
      TOFCount                                  2131       2       2       4   .bss        
-     btn                                       2133       1       1       3   .bss        
-     testStart                                 2134       1       1       2   .bss        
-     tests                                     2135       1       1       6   .bss        
-     rTimeT1                                   2136       4       4       6   .bss        
-     rTimeT2                                   213A       4       4       6   .bss        
-     rTimeT3                                   213E       4       4       6   .bss        
-     average                                   2142       4       4       8   .bss        
+     tests                                     2133       1       1       6   .bss        
+     rTimeT1                                   2134       4       4       6   .bss        
+     rTimeT2                                   2138       4       4       6   .bss        
+     rTimeT3                                   213C       4       4       6   .bss        
+     average                                   2140       4       4       8   .bss        
+     btn                                       2144       1       1       3   .bss        
+     testStart                                 2145       1       1       2   .bss        
      pbuf                                      2146       6       6      14   .bss        
      randTim                                   214C       2       2       1   .common     
-     timeStart                                 214E       2       2       3   .common     
-     timeStop                                  2150       2       2       3   .common     
-     rTime                                     2152       4       4       9   .common     
-     randLightOn                               2156       2       2       3   .common     
+     randLightOn                               214E       2       2       3   .common     
+     timeStart                                 2150       2       2       3   .common     
+     timeStop                                  2152       2       2       3   .common     
+     rTime                                     2154       4       4       9   .common     
      s                                         2158      14      20      11   .common     
      Init                                      C000      29      41       1   .init       
      _Startup                                  C029       8       8       0   .init       

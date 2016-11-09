@@ -95,16 +95,20 @@
             // _cbxNew
             // 
             this._cbxNew.AutoSize = true;
+            this._cbxNew.Checked = true;
+            this._cbxNew.CheckState = System.Windows.Forms.CheckState.Checked;
             this._cbxNew.Location = new System.Drawing.Point(279, 42);
             this._cbxNew.Name = "_cbxNew";
             this._cbxNew.Size = new System.Drawing.Size(87, 20);
             this._cbxNew.TabIndex = 6;
             this._cbxNew.Text = "New User";
             this._cbxNew.UseVisualStyleBackColor = true;
+            this._cbxNew.CheckedChanged += new System.EventHandler(this._cbxNew_CheckedChanged);
             // 
             // _btnLogin
             // 
-            this._btnLogin.Location = new System.Drawing.Point(65, 127);
+            this._btnLogin.Enabled = false;
+            this._btnLogin.Location = new System.Drawing.Point(66, 134);
             this._btnLogin.Name = "_btnLogin";
             this._btnLogin.Size = new System.Drawing.Size(99, 29);
             this._btnLogin.TabIndex = 7;
@@ -113,7 +117,7 @@
             // 
             // _btnSignup
             // 
-            this._btnSignup.Location = new System.Drawing.Point(209, 127);
+            this._btnSignup.Location = new System.Drawing.Point(209, 134);
             this._btnSignup.Name = "_btnSignup";
             this._btnSignup.Size = new System.Drawing.Size(99, 29);
             this._btnSignup.TabIndex = 8;
@@ -122,7 +126,7 @@
             // 
             // _btnConfig
             // 
-            this._btnConfig.Location = new System.Drawing.Point(66, 162);
+            this._btnConfig.Location = new System.Drawing.Point(66, 169);
             this._btnConfig.Name = "_btnConfig";
             this._btnConfig.Size = new System.Drawing.Size(99, 29);
             this._btnConfig.TabIndex = 9;
@@ -132,21 +136,21 @@
             // 
             // _btnConn
             // 
-            this._btnConn.Location = new System.Drawing.Point(209, 162);
+            this._btnConn.Location = new System.Drawing.Point(209, 169);
             this._btnConn.Name = "_btnConn";
             this._btnConn.Size = new System.Drawing.Size(99, 29);
             this._btnConn.TabIndex = 10;
             this._btnConn.Text = "Connect";
             this._btnConn.UseVisualStyleBackColor = true;
+            this._btnConn.Click += new System.EventHandler(this._btnConn_Click);
             // 
             // _lblStatus
             // 
             this._lblStatus.AutoSize = true;
-            this._lblStatus.Location = new System.Drawing.Point(12, 93);
+            this._lblStatus.Location = new System.Drawing.Point(12, 98);
             this._lblStatus.Name = "_lblStatus";
-            this._lblStatus.Size = new System.Drawing.Size(152, 16);
+            this._lblStatus.Size = new System.Drawing.Size(0, 16);
             this._lblStatus.TabIndex = 11;
-            this._lblStatus.Text = "xxxxxxxxxxxxxxxxxx";
             // 
             // _lblCR
             // 
@@ -176,9 +180,10 @@
             this.Controls.Add(this._lblPwd);
             this.Controls.Add(this._lblUsrn);
             this.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.MaximizeBox = false;
             this.Name = "Form_Main";
             this.Text = "Reaction Time Tester";
-            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

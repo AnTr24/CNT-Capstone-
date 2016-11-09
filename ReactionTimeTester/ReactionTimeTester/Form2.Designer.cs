@@ -108,7 +108,7 @@
             // 
             this._ddlPortName.FormattingEnabled = true;
             this._ddlPortName.Location = new System.Drawing.Point(96, 13);
-            this._ddlPortName.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._ddlPortName.Margin = new System.Windows.Forms.Padding(4);
             this._ddlPortName.Name = "_ddlPortName";
             this._ddlPortName.Size = new System.Drawing.Size(160, 24);
             this._ddlPortName.TabIndex = 2;
@@ -117,7 +117,7 @@
             // 
             this._ddlBaudRate.FormattingEnabled = true;
             this._ddlBaudRate.Location = new System.Drawing.Point(96, 45);
-            this._ddlBaudRate.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._ddlBaudRate.Margin = new System.Windows.Forms.Padding(4);
             this._ddlBaudRate.Name = "_ddlBaudRate";
             this._ddlBaudRate.Size = new System.Drawing.Size(160, 24);
             this._ddlBaudRate.TabIndex = 2;
@@ -126,7 +126,7 @@
             // 
             this._ddlDataBits.FormattingEnabled = true;
             this._ddlDataBits.Location = new System.Drawing.Point(96, 77);
-            this._ddlDataBits.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._ddlDataBits.Margin = new System.Windows.Forms.Padding(4);
             this._ddlDataBits.Name = "_ddlDataBits";
             this._ddlDataBits.Size = new System.Drawing.Size(160, 24);
             this._ddlDataBits.TabIndex = 2;
@@ -135,7 +135,7 @@
             // 
             this._ddlStopBits.FormattingEnabled = true;
             this._ddlStopBits.Location = new System.Drawing.Point(96, 109);
-            this._ddlStopBits.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._ddlStopBits.Margin = new System.Windows.Forms.Padding(4);
             this._ddlStopBits.Name = "_ddlStopBits";
             this._ddlStopBits.Size = new System.Drawing.Size(160, 24);
             this._ddlStopBits.TabIndex = 2;
@@ -144,7 +144,7 @@
             // 
             this._ddlHandshake.FormattingEnabled = true;
             this._ddlHandshake.Location = new System.Drawing.Point(96, 141);
-            this._ddlHandshake.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._ddlHandshake.Margin = new System.Windows.Forms.Padding(4);
             this._ddlHandshake.Name = "_ddlHandshake";
             this._ddlHandshake.Size = new System.Drawing.Size(160, 24);
             this._ddlHandshake.TabIndex = 2;
@@ -153,26 +153,26 @@
             // 
             this._ddlParity.FormattingEnabled = true;
             this._ddlParity.Location = new System.Drawing.Point(96, 173);
-            this._ddlParity.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._ddlParity.Margin = new System.Windows.Forms.Padding(4);
             this._ddlParity.Name = "_ddlParity";
             this._ddlParity.Size = new System.Drawing.Size(160, 24);
             this._ddlParity.TabIndex = 2;
             // 
             // _btnConfirm
             // 
-            this._btnConfirm.Location = new System.Drawing.Point(16, 205);
-            this._btnConfirm.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._btnConfirm.Location = new System.Drawing.Point(16, 208);
+            this._btnConfirm.Margin = new System.Windows.Forms.Padding(4);
             this._btnConfirm.Name = "_btnConfirm";
             this._btnConfirm.Size = new System.Drawing.Size(100, 28);
             this._btnConfirm.TabIndex = 3;
-            this._btnConfirm.Text = "Confirm";
+            this._btnConfirm.Text = "OK";
             this._btnConfirm.UseVisualStyleBackColor = true;
             this._btnConfirm.Click += new System.EventHandler(this._btnConfirm_Click);
             // 
             // _btnDefault
             // 
-            this._btnDefault.Location = new System.Drawing.Point(156, 205);
-            this._btnDefault.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._btnDefault.Location = new System.Drawing.Point(156, 208);
+            this._btnDefault.Margin = new System.Windows.Forms.Padding(4);
             this._btnDefault.Name = "_btnDefault";
             this._btnDefault.Size = new System.Drawing.Size(100, 28);
             this._btnDefault.TabIndex = 4;
@@ -200,7 +200,9 @@
             this.Controls.Add(this._lblBaudRate);
             this.Controls.Add(this._lblPortName);
             this.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Margin = new System.Windows.Forms.Padding(4);
+            this.MaximizeBox = false;
             this.Name = "Form_Config";
             this.Text = "Serial Port Config";
             this.Load += new System.EventHandler(this.Form_Config_Load);

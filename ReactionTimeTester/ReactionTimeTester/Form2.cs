@@ -13,36 +13,79 @@ namespace ReactionTimeTester
 {
     public partial class Form_Config : Form
     {
+        // Properties
+        public string PortName
+        {
+            get { return _ddlPortName.Text; }
+            set { _ddlPortName.Text = value; }
+        }
+
+        public int BaudRate
+        {
+            get { return Convert.ToInt32(_ddlBaudRate.Text); }
+            set { _ddlBaudRate.Text = value.ToString(); }
+        }
+
+        public int DataBits
+        {
+            get { return Convert.ToInt16(_ddlDataBits.Text); }
+            set { _ddlDataBits.Text = value.ToString(); }
+        }
+
+        public StopBits StopBits
+        {
+            get { return (StopBits)Enum.Parse(typeof(StopBits), _ddlStopBits.Text); }
+            set { _ddlStopBits.Text = value.ToString(); }
+        }
+
+        public Handshake Handshake
+        {
+            get { return (Handshake)Enum.Parse(typeof(Handshake), _ddlHandshake.Text); }
+            set { _ddlHandshake.Text = value.ToString(); }
+        }
+
+        public Parity Parity
+        {
+            get { return (Parity)Enum.Parse(typeof(Parity), _ddlParity.Text); }
+            set { _ddlParity.Text = value.ToString(); }
+        }
 
         public Form_Config()
         {
             InitializeComponent();
         }
 
+        // Config form load handler
         private void Form_Config_Load(object sender, EventArgs e)
         {
+            // Load all the menus
             LoadDropDownLists();
-            RestoreDefault();
+            // Set each drop down list to the current value
+            _ddlPortName.Text = Form_Main.sPort.PortName;
+            _ddlBaudRate.Text = BaudRate.ToString();
+            _ddlDataBits.Text = DataBits.ToString();
+            _ddlStopBits.Text = StopBits.ToString();
+            _ddlHandshake.Text = Handshake.ToString();
+            _ddlParity.Text = Parity.ToString();
         }
 
+        // Default button handler set the port to a default settings
         private void _btnDefault_Click(object sender, EventArgs e)
         {
-            RestoreDefault();
+            // Default settings are what we use
+            _ddlPortName.Text = _ddlPortName.Items[1].ToString();
+            _ddlBaudRate.Text = _ddlBaudRate.Items[7].ToString();
+            _ddlDataBits.Text = _ddlDataBits.Items[1].ToString();
+            _ddlStopBits.Text = _ddlStopBits.Items[0].ToString();
+            _ddlHandshake.Text = _ddlHandshake.Items[0].ToString();
+            _ddlParity.Text = _ddlParity.Items[0].ToString();
         }
 
+        // Confirm button handler set the serial port in the main form 
         private void _btnConfirm_Click(object sender, EventArgs e)
         {
-            Form_Main.sPort.PortName = _ddlPortName.Text.ToString();
-            Form_Main.sPort.BaudRate = Convert.ToInt32(_ddlBaudRate.Text);
-            Form_Main.sPort.DataBits = Convert.ToInt16(_ddlDataBits.Text);
-            Form_Main.sPort.StopBits = (StopBits)Enum.Parse(typeof(StopBits), _ddlStopBits.Text);
-            Form_Main.sPort.Handshake = (Handshake)Enum.Parse(typeof(Handshake), _ddlHandshake.Text);
-            Form_Main.sPort.Parity = (Parity)Enum.Parse(typeof(Parity), _ddlParity.Text);
-            
-            // Close Config Form
-
-
-    }
+            DialogResult = DialogResult.OK;
+        }
 
         // Load setting options into all the drop down lists 
         private void LoadDropDownLists()
@@ -78,24 +121,13 @@ namespace ReactionTimeTester
             _ddlHandshake.Items.Add("None");
             _ddlHandshake.Items.Add("XOnXOff");
             _ddlHandshake.Items.Add("RequestToSend");
-            
+
             // Load Parity 
             _ddlParity.Items.Add("None");
             _ddlParity.Items.Add("Odd");
             _ddlParity.Items.Add("Even");
             _ddlParity.Items.Add("Mark");
             _ddlParity.Items.Add("Space");
-        }
-
-        // Restore all the drop down lists to the default settings
-        private void RestoreDefault()
-        {
-            _ddlPortName.Text = _ddlPortName.Items[1].ToString();
-            _ddlBaudRate.Text = _ddlBaudRate.Items[7].ToString();
-            _ddlDataBits.Text = _ddlDataBits.Items[1].ToString();
-            _ddlStopBits.Text = _ddlStopBits.Items[0].ToString();
-            _ddlHandshake.Text = _ddlHandshake.Items[0].ToString();
-            _ddlParity.Text = _ddlParity.Items[0].ToString();
         }
 
     }
