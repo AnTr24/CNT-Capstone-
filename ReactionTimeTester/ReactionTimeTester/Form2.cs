@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO.Ports;
 
+// Config Form: Contains serial port configurations
+// Author:      YunJie Li
+// Date:        November 2016
 namespace ReactionTimeTester
 {
     public partial class Form_Config : Form

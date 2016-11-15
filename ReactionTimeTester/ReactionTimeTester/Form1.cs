@@ -11,14 +11,17 @@ using System.IO.Ports;
 using System.Data.SqlClient;
 using System.Configuration;
 
-// 
+// Driver Main Form:    Provides user login/sign up options. Serial port configuration will create a config form.
+// Author:              YunJie Li
+// Date:                November 2016
 namespace ReactionTimeTester
 {
+    // Delegates
+    delegate void SetTextCallback(string text);
+
     public partial class Form_Main : Form
     {
-        delegate void SerialDataReceivedEventHandlerDel(object sender, SerialDataReceivedEventArgs e);
-        delegate void SetTextCallback(string text);
-
+        private string connString = "Data Source=bender.net.nait.ca,24680;Initial Catalog=atran26_Capstone2016;Persist Security Info=True;User ID=atran26;Password=CNT_123";
         public static SerialPort sPort { get; set; }
 
         string dataReceived = "";
@@ -30,28 +33,24 @@ namespace ReactionTimeTester
             // Initialize the serial port, set default baud rate to 19200 (we will use this)
             sPort = new SerialPort();
             sPort.BaudRate = 19200;
-
-            sPort.DataReceived += new SerialDataReceivedEventHandler(serialPort_DataReceive);
-
         }
 
-        private void serialPort_DataReceive(object sender, SerialDataReceivedEventArgs e)
+        // Data receive event handler
+        private void _sPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
+            // Read the existing data from port
             dataReceived = sPort.ReadExisting();
-            if (dataReceived != "")
-                Invoke(new SetTextCallback(OutputText), new object[] { dataReceived });
+
+            // If we receive data from serial, invoke the call back method (InsertData)
             if (dataReceived != "")
                 Invoke(new SetTextCallback(InsertData), new object[] { dataReceived });
         }
 
-        private void OutputText(string t)
-        {
-            _lblStatus.Text += t;
-        }
-
+        // Call back method to insert serial data into database
         private void InsertData(string s)
         {
-            SqlConnection conn = new SqlConnection("Data Source=bender.net.nait.ca,24680;Initial Catalog=atran26_Capstone2016;Persist Security Info=True;User ID=atran26;Password=CNT_123");
+            // Connect with sql using the connecting string
+            SqlConnection conn = new SqlConnection(connString);
             conn.Open();
 
             SqlCommand command = new SqlCommand();
@@ -99,11 +98,31 @@ namespace ReactionTimeTester
             }
         }
 
+        // Connect button handler
         private void _btnConn_Click(object sender, EventArgs e)
         {
-            sPort.Open();
+            // If port is open
+            if (sPort.IsOpen)
+            {
+                sPort.Close();
+                _btnConfig.Enabled = true;
+                _lblStatus.ForeColor = Color.Red;
+                _lblStatus.Text = "Disconnected.";
+                _btnConn.Text = "Connect";
+            }
+            // If port is closed
+            else
+            {
+                sPort.Open();
+                _btnConfig.Enabled = false;              
+                _lblStatus.ForeColor = Color.Green;
+                _lblStatus.Text = "Connected.";
+                _btnConn.Text = "Disconnect";
+            }
+
         }
 
+        // New user check box changed handler
         private void _cbxNew_CheckedChanged(object sender, EventArgs e)
         {
             if (!_cbxNew.Checked)
@@ -121,7 +140,6 @@ namespace ReactionTimeTester
                 _btnSignup.Enabled = true;
                 _lblCnfmPwd.Enabled = true;
             }
-
         }
     }
 }

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this._lblUsrn = new System.Windows.Forms.Label();
             this._lblPwd = new System.Windows.Forms.Label();
             this._tbxUsrn = new System.Windows.Forms.TextBox();
@@ -41,6 +42,7 @@
             this._btnConn = new System.Windows.Forms.Button();
             this._lblStatus = new System.Windows.Forms.Label();
             this._lblCR = new System.Windows.Forms.Label();
+            this._sPort = new System.IO.Ports.SerialPort(this.components);
             this.SuspendLayout();
             // 
             // _lblUsrn
@@ -161,6 +163,10 @@
             this._lblCR.TabIndex = 12;
             this._lblCR.Text = "© Copyright 2016 by Andy Tran and YunJie Li";
             // 
+            // _sPort
+            // 
+            this._sPort.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this._sPort_DataReceived);
+            // 
             // Form_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -204,6 +210,7 @@
         private System.Windows.Forms.Button _btnConn;
         private System.Windows.Forms.Label _lblStatus;
         private System.Windows.Forms.Label _lblCR;
+        private System.IO.Ports.SerialPort _sPort;
     }
 }
 
