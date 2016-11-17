@@ -116,15 +116,17 @@
             this._btnLogin.TabIndex = 7;
             this._btnLogin.Text = "Log in";
             this._btnLogin.UseVisualStyleBackColor = true;
+            this._btnLogin.Click += new System.EventHandler(this._btnLogin_Click);
             // 
             // _btnSignup
             // 
-            this._btnSignup.Location = new System.Drawing.Point(209, 134);
+            this._btnSignup.Location = new System.Drawing.Point(202, 134);
             this._btnSignup.Name = "_btnSignup";
             this._btnSignup.Size = new System.Drawing.Size(99, 29);
             this._btnSignup.TabIndex = 8;
             this._btnSignup.Text = "Sign up";
             this._btnSignup.UseVisualStyleBackColor = true;
+            this._btnSignup.Click += new System.EventHandler(this._btnSignup_Click);
             // 
             // _btnConfig
             // 
@@ -138,7 +140,7 @@
             // 
             // _btnConn
             // 
-            this._btnConn.Location = new System.Drawing.Point(209, 169);
+            this._btnConn.Location = new System.Drawing.Point(202, 169);
             this._btnConn.Name = "_btnConn";
             this._btnConn.Size = new System.Drawing.Size(99, 29);
             this._btnConn.TabIndex = 10;
@@ -165,6 +167,7 @@
             // 
             // _sPort
             // 
+            this._sPort.BaudRate = 19200;
             this._sPort.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this._sPort_DataReceived);
             // 
             // Form_Main
@@ -190,6 +193,7 @@
             this.MaximizeBox = false;
             this.Name = "Form_Main";
             this.Text = "Reaction Time Tester";
+            this.Load += new System.EventHandler(this.Form_Main_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

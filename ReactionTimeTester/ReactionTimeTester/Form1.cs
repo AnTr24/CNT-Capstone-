@@ -17,57 +17,47 @@ using System.Configuration;
 namespace ReactionTimeTester
 {
     // Delegates
-    delegate void SetTextCallback(string text);
+    delegate void ReadDataCallback(string text);
 
     public partial class Form_Main : Form
     {
+        SqlConnection sqlConn = null;
+        SqlCommand sqlCmd = null;
         private string connString = "Data Source=bender.net.nait.ca,24680;Initial Catalog=atran26_Capstone2016;Persist Security Info=True;User ID=atran26;Password=CNT_123";
-        public static SerialPort sPort { get; set; }
 
+        string username = null;
         string dataReceived = "";
 
         public Form_Main()
         {
             InitializeComponent();
+        }
 
-            // Initialize the serial port, set default baud rate to 19200 (we will use this)
-            sPort = new SerialPort();
-            sPort.BaudRate = 19200;
+        private void Form_Main_Load(object sender, EventArgs e)
+        {
+            sqlConn = new SqlConnection(connString);
+            sqlConn.Open();
         }
 
         // Data receive event handler
         private void _sPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            // Read the existing data from port
-            dataReceived = sPort.ReadExisting();
+            try
+            {
+                // Read the existing data from port
+                dataReceived = _sPort.ReadExisting();
 
-            // If we receive data from serial, invoke the call back method (InsertData)
-            if (dataReceived != "")
-                Invoke(new SetTextCallback(InsertData), new object[] { dataReceived });
+                // If we receive data from serial, invoke the call back method (InsertData)
+                if (dataReceived != "")
+                    Invoke(new ReadDataCallback(InsertData), new object[] { dataReceived });
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine("Error reading from serial port: " + err);
+            }
         }
 
-        // Call back method to insert serial data into database
-        private void InsertData(string s)
-        {
-            // Connect with sql using the connecting string
-            SqlConnection conn = new SqlConnection(connString);
-            conn.Open();
 
-            SqlCommand command = new SqlCommand();
-            command.Connection = conn;
-
-            command.CommandType = CommandType.StoredProcedure;
-            command.CommandText = "TestProcedure";
-
-            SqlParameter param = new SqlParameter();
-            param.Direction = ParameterDirection.Input;
-            param.ParameterName = "@teststring";
-            param.SqlDbType = SqlDbType.NVarChar;
-            param.Value = s;
-            command.Parameters.Add(param);
-
-            command.ExecuteNonQuery();
-        }
 
         private void _btnConfig_Click(object sender, EventArgs e)
         {
@@ -76,22 +66,22 @@ namespace ReactionTimeTester
 
             // Initialize the config form and set the properties
             Form_Config FormConfig = new Form_Config();
-            FormConfig.PortName = sPort.PortName;
-            FormConfig.BaudRate = sPort.BaudRate;
-            FormConfig.DataBits = sPort.DataBits;
-            FormConfig.StopBits = sPort.StopBits;
-            FormConfig.Handshake = sPort.Handshake;
-            FormConfig.Parity = sPort.Parity;
+            FormConfig.PortName = _sPort.PortName;
+            FormConfig.BaudRate = _sPort.BaudRate;
+            FormConfig.DataBits = _sPort.DataBits;
+            FormConfig.StopBits = _sPort.StopBits;
+            FormConfig.Handshake = _sPort.Handshake;
+            FormConfig.Parity = _sPort.Parity;
 
             // Use modal dialog and if OK return the properties
             if (DialogResult.OK == FormConfig.ShowDialog())
             {
-                sPort.PortName = FormConfig.PortName;
-                sPort.BaudRate = FormConfig.BaudRate;
-                sPort.DataBits = FormConfig.DataBits;
-                sPort.StopBits = FormConfig.StopBits;
-                sPort.Handshake = FormConfig.Handshake;
-                sPort.Parity = FormConfig.Parity;
+                _sPort.PortName = FormConfig.PortName;
+                _sPort.BaudRate = FormConfig.BaudRate;
+                _sPort.DataBits = FormConfig.DataBits;
+                _sPort.StopBits = FormConfig.StopBits;
+                _sPort.Handshake = FormConfig.Handshake;
+                _sPort.Parity = FormConfig.Parity;
 
                 _lblStatus.ForeColor = Color.Green;
                 _lblStatus.Text = "Config successful.";
@@ -102,9 +92,9 @@ namespace ReactionTimeTester
         private void _btnConn_Click(object sender, EventArgs e)
         {
             // If port is open
-            if (sPort.IsOpen)
+            if (_sPort.IsOpen)
             {
-                sPort.Close();
+                _sPort.Close();
                 _btnConfig.Enabled = true;
                 _lblStatus.ForeColor = Color.Red;
                 _lblStatus.Text = "Disconnected.";
@@ -113,8 +103,8 @@ namespace ReactionTimeTester
             // If port is closed
             else
             {
-                sPort.Open();
-                _btnConfig.Enabled = false;              
+                _sPort.Open();
+                _btnConfig.Enabled = false;
                 _lblStatus.ForeColor = Color.Green;
                 _lblStatus.Text = "Connected.";
                 _btnConn.Text = "Disconnect";
@@ -141,5 +131,99 @@ namespace ReactionTimeTester
                 _lblCnfmPwd.Enabled = true;
             }
         }
+
+        private void _btnLogin_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void _btnSignup_Click(object sender, EventArgs e)
+        {
+            // Check if user has entered a username and password
+            if (_tbxUsrn.Text == "" || _tbxPwd.Text == "")
+            {
+                _lblStatus.ForeColor = Color.Red;
+                _lblStatus.Text = "Please enter your username and password.";
+            }
+            else if (_tbxPwd.Text != _tbxCnfmPwd.Text)
+            {
+                _lblStatus.ForeColor = Color.Red;
+                _lblStatus.Text = "Password do not match. Please enter again.";
+            }
+            else
+            {
+                string usrN = _tbxUsrn.Text;
+                string pswd = _tbxPwd.Text;
+
+                sqlCmd = new SqlCommand();
+                sqlCmd.Connection = sqlConn;
+
+                sqlCmd.CommandType = CommandType.StoredProcedure;
+                sqlCmd.CommandText = "AddUser";
+
+                SqlParameter param = new SqlParameter();
+                param.Direction = ParameterDirection.Input;
+                param.ParameterName = "@username";
+                param.SqlDbType = SqlDbType.NVarChar;
+                param.Value = usrN;
+                sqlCmd.Parameters.Add(param);
+
+                param = new SqlParameter();
+                param.Direction = ParameterDirection.Input;
+                param.ParameterName = "@password";
+                param.SqlDbType = SqlDbType.NVarChar;
+                param.Value = pswd;
+                sqlCmd.Parameters.Add(param);
+
+                try
+                {
+                    if (sqlCmd.ExecuteNonQuery() == 0)
+                    {
+                        username = usrN;
+                        _lblStatus.ForeColor = Color.Green;
+                        _lblStatus.Text = "You have successfully logged in.";
+                    }
+                    else if (sqlCmd.ExecuteNonQuery() == 1)
+                    {
+                        _lblStatus.ForeColor = Color.Red;
+                        _lblStatus.Text = "The username has been taken.";
+                    }
+                    else
+                        Console.WriteLine(sqlCmd.ExecuteNonQuery());
+                }
+                catch (Exception err)
+                {
+                    Console.WriteLine("Error adding user: " + err.Message);
+                }
+            }
+        }        
+        
+        // Call back method to insert serial data into database
+        private void InsertData(string s)
+        {
+            float num = 0;
+            if (float.TryParse(s, out num))
+            {
+
+                // Connect with sql using the connecting string
+                sqlCmd = new SqlCommand();
+                sqlCmd.Connection = sqlConn;
+
+                sqlCmd.CommandType = CommandType.StoredProcedure;
+                sqlCmd.CommandText = "TestProcedure";
+
+                SqlParameter param = new SqlParameter();
+                param.Direction = ParameterDirection.Input;
+                param.ParameterName = "@teststring";
+                param.SqlDbType = SqlDbType.NVarChar;
+                param.Value = num.ToString();
+                sqlCmd.Parameters.Add(param);
+
+                sqlCmd.ExecuteNonQuery();
+            }
+            else
+                Text = "Not float";
+        }
+
     }
 }

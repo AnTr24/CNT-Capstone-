@@ -63,13 +63,6 @@ namespace ReactionTimeTester
         {
             // Load all the menus
             LoadDropDownLists();
-            // Set each drop down list to the current value
-            _ddlPortName.Text = Form_Main.sPort.PortName;
-            _ddlBaudRate.Text = BaudRate.ToString();
-            _ddlDataBits.Text = DataBits.ToString();
-            _ddlStopBits.Text = StopBits.ToString();
-            _ddlHandshake.Text = Handshake.ToString();
-            _ddlParity.Text = Parity.ToString();
         }
 
         // Default button handler set the port to a default settings
