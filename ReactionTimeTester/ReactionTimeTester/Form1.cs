@@ -28,6 +28,8 @@ namespace ReactionTimeTester
         string username = null;
         string dataReceived = "";
 
+        bool IsLogin = false;
+
         public Form_Main()
         {
             InitializeComponent();
@@ -134,11 +136,86 @@ namespace ReactionTimeTester
 
         private void _btnLogin_Click(object sender, EventArgs e)
         {
+            if (IsLogin)
+            {
+                _btnLogin.Text = "Login";
+                IsLogin = false;
+                username = "";
+                _lblStatus.Text = "You have logged out.";
+                _cbxNew.Checked = false;
+                return;
+            }
 
+            // Check if user has entered a username and password
+            if (_tbxUsrn.Text == "" || _tbxPwd.Text == "")
+            {
+                _lblStatus.ForeColor = Color.Red;
+                _lblStatus.Text = "Please enter your username and password.";
+            }
+            else
+            {
+                string usrN = _tbxUsrn.Text;
+                string pswd = _tbxPwd.Text;
+
+                sqlCmd = new SqlCommand();
+                sqlCmd.Connection = sqlConn;
+
+                sqlCmd.CommandType = CommandType.StoredProcedure;
+                sqlCmd.CommandText = "ValidateUser";
+
+                SqlParameter param = new SqlParameter();
+                param.Direction = ParameterDirection.Input;
+                param.ParameterName = "@username";
+                param.SqlDbType = SqlDbType.NVarChar;
+                param.Value = usrN;
+                sqlCmd.Parameters.Add(param);
+
+                param = new SqlParameter();
+                param.Direction = ParameterDirection.Input;
+                param.ParameterName = "@password";
+                param.SqlDbType = SqlDbType.NVarChar;
+                param.Value = pswd;
+                sqlCmd.Parameters.Add(param);
+
+                SqlParameter retVal = new SqlParameter();
+                retVal.Direction = ParameterDirection.ReturnValue;
+                retVal.ParameterName = "@return";
+                retVal.SqlDbType = SqlDbType.Int;
+                sqlCmd.Parameters.Add(retVal);
+
+
+                
+
+                try
+                {
+                    sqlCmd.ExecuteNonQuery();
+
+                    if ((int)sqlCmd.Parameters["@return"].Value == 0)
+                    {
+                        username = usrN;
+                        _btnLogin.Text = "Logout";
+                        _lblStatus.ForeColor = Color.Green;
+                        _lblStatus.Text = "You have successfully logged in.";
+                        IsLogin = true;
+                    }
+                    else if ((int)sqlCmd.Parameters["@return"].Value == 1)
+                    {
+                        _lblStatus.ForeColor = Color.Red;
+                        _lblStatus.Text = "The username or password is incorrect.";
+                    }
+                    else
+                        Console.WriteLine("Error. Please try again later.");
+                }
+                catch (Exception err)
+                {
+                    Console.WriteLine("Error adding user: " + err.Message);
+                }
+            }
         }
 
         private void _btnSignup_Click(object sender, EventArgs e)
         {
+
             // Check if user has entered a username and password
             if (_tbxUsrn.Text == "" || _tbxPwd.Text == "")
             {
@@ -175,21 +252,36 @@ namespace ReactionTimeTester
                 param.Value = pswd;
                 sqlCmd.Parameters.Add(param);
 
+                SqlParameter retVal = new SqlParameter();
+                retVal.Direction = ParameterDirection.ReturnValue;
+                retVal.ParameterName = "@return";
+                retVal.SqlDbType = SqlDbType.Int;
+                sqlCmd.Parameters.Add(retVal);
+
+
+                
+
                 try
                 {
-                    if (sqlCmd.ExecuteNonQuery() == 0)
+                    sqlCmd.ExecuteNonQuery();
+
+                    if ((int)sqlCmd.Parameters["@return"].Value == 0)
                     {
                         username = usrN;
                         _lblStatus.ForeColor = Color.Green;
-                        _lblStatus.Text = "You have successfully logged in.";
+                        _lblStatus.Text = "You have successfully signed up.";
+                        IsLogin = true;
+                        _btnSignup.Enabled = false;
+                        _btnLogin.Enabled = true;
+                        _btnLogin.Text = "Logout";
                     }
-                    else if (sqlCmd.ExecuteNonQuery() == 1)
+                    else if ((int)sqlCmd.Parameters["@return"].Value == 1)
                     {
                         _lblStatus.ForeColor = Color.Red;
                         _lblStatus.Text = "The username has been taken.";
                     }
                     else
-                        Console.WriteLine(sqlCmd.ExecuteNonQuery());
+                        Console.WriteLine("Error. Please try again later.");
                 }
                 catch (Exception err)
                 {
