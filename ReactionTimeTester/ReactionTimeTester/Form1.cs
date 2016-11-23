@@ -16,19 +16,20 @@ using System.Configuration;
 // Date:                November 2016
 namespace ReactionTimeTester
 {
-    // Delegates
+    // Delegate 
     delegate void ReadDataCallback(string text);
 
     public partial class Form_Main : Form
     {
-        SqlConnection sqlConn = null;
-        SqlCommand sqlCmd = null;
+        // Connection string to SQL database
         private string connString = "Data Source=bender.net.nait.ca,24680;Initial Catalog=atran26_Capstone2016;Persist Security Info=True;User ID=atran26;Password=CNT_123";
 
-        string username = null;
-        string dataReceived = "";
+        SqlConnection sqlConn = null;   // SQL connection object used to insert data
+        SqlCommand sqlCmd = null;       // SQL command used by the stored procedures
 
-        bool IsLogin = false;
+        List<byte> rxBuff = null;       // Buffer used to store serial data. Data will be parsed from here into floats
+        string username = null;         // Username of the current login user
+        bool IsLogin = false;           // Login status
 
         public Form_Main()
         {
@@ -37,29 +38,13 @@ namespace ReactionTimeTester
 
         private void Form_Main_Load(object sender, EventArgs e)
         {
+            // Initialize the buffer
+            rxBuff = new List<byte>();
+
+            // Initialize the SQL connection
             sqlConn = new SqlConnection(connString);
             sqlConn.Open();
         }
-
-        // Data receive event handler
-        private void _sPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
-        {
-            try
-            {
-                // Read the existing data from port
-                dataReceived = _sPort.ReadExisting();
-
-                // If we receive data from serial, invoke the call back method (InsertData)
-                if (dataReceived != "")
-                    Invoke(new ReadDataCallback(InsertData), new object[] { dataReceived });
-            }
-            catch (Exception err)
-            {
-                Console.WriteLine("Error reading from serial port: " + err);
-            }
-        }
-
-
 
         private void _btnConfig_Click(object sender, EventArgs e)
         {
@@ -105,11 +90,23 @@ namespace ReactionTimeTester
             // If port is closed
             else
             {
-                _sPort.Open();
-                _btnConfig.Enabled = false;
-                _lblStatus.ForeColor = Color.Green;
-                _lblStatus.Text = "Connected.";
-                _btnConn.Text = "Disconnect";
+                try
+                {
+                    _sPort.Encoding = Encoding.UTF8;
+                    _sPort.Open();
+                    _sPort.DiscardInBuffer();
+
+                    _btnConfig.Enabled = false;
+                    _lblStatus.ForeColor = Color.Green;
+                    _lblStatus.Text = "Connected.";
+                    _btnConn.Text = "Disconnect";
+
+                }
+                catch (Exception err)
+                {
+                    Console.WriteLine("Error opening the serial port: " + err.Message);
+                }
+
             }
 
         }
@@ -140,6 +137,7 @@ namespace ReactionTimeTester
             {
                 _btnLogin.Text = "Login";
                 IsLogin = false;
+                _btnConn.Enabled = false;
                 username = "";
                 _lblStatus.Text = "You have logged out.";
                 _cbxNew.Checked = false;
@@ -183,9 +181,6 @@ namespace ReactionTimeTester
                 retVal.SqlDbType = SqlDbType.Int;
                 sqlCmd.Parameters.Add(retVal);
 
-
-                
-
                 try
                 {
                     sqlCmd.ExecuteNonQuery();
@@ -196,6 +191,7 @@ namespace ReactionTimeTester
                         _btnLogin.Text = "Logout";
                         _lblStatus.ForeColor = Color.Green;
                         _lblStatus.Text = "You have successfully logged in.";
+                        _btnConn.Enabled = true;
                         IsLogin = true;
                     }
                     else if ((int)sqlCmd.Parameters["@return"].Value == 1)
@@ -258,9 +254,6 @@ namespace ReactionTimeTester
                 retVal.SqlDbType = SqlDbType.Int;
                 sqlCmd.Parameters.Add(retVal);
 
-
-                
-
                 try
                 {
                     sqlCmd.ExecuteNonQuery();
@@ -271,6 +264,7 @@ namespace ReactionTimeTester
                         _lblStatus.ForeColor = Color.Green;
                         _lblStatus.Text = "You have successfully signed up.";
                         IsLogin = true;
+                        _btnConn.Enabled = true;
                         _btnSignup.Enabled = false;
                         _btnLogin.Enabled = true;
                         _btnLogin.Text = "Logout";
@@ -288,34 +282,110 @@ namespace ReactionTimeTester
                     Console.WriteLine("Error adding user: " + err.Message);
                 }
             }
-        }        
-        
+        }
+
         // Call back method to insert serial data into database
-        private void InsertData(string s)
+        private void InsertData(string usrN, double rs1, double rs2, double rs3, double avg)
         {
-            float num = 0;
-            if (float.TryParse(s, out num))
+            // Connect with sql using the connecting string
+            sqlCmd = new SqlCommand();
+            sqlCmd.Connection = sqlConn;
+
+            sqlCmd.CommandType = CommandType.StoredProcedure;
+            sqlCmd.CommandText = "AddTestResults";
+
+            // Assign username
+            SqlParameter param = new SqlParameter();
+            param.Direction = ParameterDirection.Input;
+            param.ParameterName = "@username";
+            param.SqlDbType = SqlDbType.NVarChar;
+            param.Value = usrN;
+            sqlCmd.Parameters.Add(param);
+
+            // Assign result 1
+            param = new SqlParameter();
+            param.Direction = ParameterDirection.Input;
+            param.ParameterName = "@Test1Time";
+            param.SqlDbType = SqlDbType.Float;
+            param.Value = rs1;
+            sqlCmd.Parameters.Add(param);
+
+            // Assign result 2
+            param = new SqlParameter();
+            param.Direction = ParameterDirection.Input;
+            param.ParameterName = "@Test2Time";
+            param.SqlDbType = SqlDbType.Float;
+            param.Value = rs2;
+            sqlCmd.Parameters.Add(param);
+
+            // Assign result 3
+            param = new SqlParameter();
+            param.Direction = ParameterDirection.Input;
+            param.ParameterName = "@Test3Time";
+            param.SqlDbType = SqlDbType.Float;
+            param.Value = rs3;
+            sqlCmd.Parameters.Add(param);
+
+            // Assign results' average
+            param = new SqlParameter();
+            param.Direction = ParameterDirection.Input;
+            param.ParameterName = "@TestAverage";
+            param.SqlDbType = SqlDbType.Float;
+            param.Value = avg;
+            sqlCmd.Parameters.Add(param);
+
+            try
             {
-
-                // Connect with sql using the connecting string
-                sqlCmd = new SqlCommand();
-                sqlCmd.Connection = sqlConn;
-
-                sqlCmd.CommandType = CommandType.StoredProcedure;
-                sqlCmd.CommandText = "TestProcedure";
-
-                SqlParameter param = new SqlParameter();
-                param.Direction = ParameterDirection.Input;
-                param.ParameterName = "@teststring";
-                param.SqlDbType = SqlDbType.NVarChar;
-                param.Value = num.ToString();
-                sqlCmd.Parameters.Add(param);
-
                 sqlCmd.ExecuteNonQuery();
             }
-            else
-                Text = "Not float";
+            catch (Exception err)
+            {
+                Console.WriteLine("Error: " + err.Message);
+            }
+
+        }
+
+
+
+        private void _tmr_Main_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                // Read bytes from serial port until we have at least 17 bytes
+                while (_sPort.BytesToRead > 0 && rxBuff.Count < 17)
+                    rxBuff.Add((byte)_sPort.ReadByte());
+                // Once we have 9 bytes, we can start to parse
+                if (rxBuff[0] != 126 || rxBuff[2] != 46 || rxBuff[7] != 46 || rxBuff[12] != 46 || rxBuff[16] != 33)
+                {
+                    rxBuff.RemoveAt(0);
+                    return;
+                }
+                // Parse the data and insert into the database
+                double rs1 = (double)(rxBuff[1] * 1000 + rxBuff[3] * 100 + rxBuff[4] * 10 + rxBuff[5]) / 1000;
+                double rs2 = (double)(rxBuff[6] * 1000 + rxBuff[8] * 100 + rxBuff[9] * 10 + rxBuff[10]) / 1000;
+                double rs3 = (double)(rxBuff[11] * 1000 + rxBuff[13] * 100 + rxBuff[14] * 10 + rxBuff[15]) / 1000;
+                double avg = (rs1 + rs2 + rs3) / 3;
+
+                // Remove the whole frame
+                for (int i = 0; i < 17; i++)
+                    rxBuff.RemoveAt(0);
+
+                InsertData(username, rs1, rs2, rs3, avg);
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine("Error reading data from serial port: " + err.Message);
+            }
+
+
+
+
+
+
+
+
         }
 
     }
 }
+

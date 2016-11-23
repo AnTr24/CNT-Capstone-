@@ -43,6 +43,7 @@
             this._lblStatus = new System.Windows.Forms.Label();
             this._lblCR = new System.Windows.Forms.Label();
             this._sPort = new System.IO.Ports.SerialPort(this.components);
+            this._tmr_Main = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // _lblUsrn
@@ -168,7 +169,12 @@
             // _sPort
             // 
             this._sPort.BaudRate = 19200;
-            this._sPort.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this._sPort_DataReceived);
+            // 
+            // _tmr_Main
+            // 
+            this._tmr_Main.Enabled = true;
+            this._tmr_Main.Interval = 25;
+            this._tmr_Main.Tick += new System.EventHandler(this._tmr_Main_Tick);
             // 
             // Form_Main
             // 
@@ -215,6 +221,7 @@
         private System.Windows.Forms.Label _lblStatus;
         private System.Windows.Forms.Label _lblCR;
         private System.IO.Ports.SerialPort _sPort;
+        private System.Windows.Forms.Timer _tmr_Main;
     }
 }
 
