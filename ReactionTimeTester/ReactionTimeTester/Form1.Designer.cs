@@ -141,6 +141,7 @@
             // 
             // _btnConn
             // 
+            this._btnConn.Enabled = false;
             this._btnConn.Location = new System.Drawing.Point(202, 169);
             this._btnConn.Name = "_btnConn";
             this._btnConn.Size = new System.Drawing.Size(99, 29);
@@ -172,7 +173,6 @@
             // 
             // _tmr_Main
             // 
-            this._tmr_Main.Enabled = true;
             this._tmr_Main.Interval = 25;
             this._tmr_Main.Tick += new System.EventHandler(this._tmr_Main_Tick);
             // 

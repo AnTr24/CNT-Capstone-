@@ -82,6 +82,7 @@ namespace ReactionTimeTester
             if (_sPort.IsOpen)
             {
                 _sPort.Close();
+                _tmr_Main.Stop();
                 _btnConfig.Enabled = true;
                 _lblStatus.ForeColor = Color.Red;
                 _lblStatus.Text = "Disconnected.";
@@ -95,6 +96,7 @@ namespace ReactionTimeTester
                     _sPort.Encoding = Encoding.UTF8;
                     _sPort.Open();
                     _sPort.DiscardInBuffer();
+                    _tmr_Main.Start();
 
                     _btnConfig.Enabled = false;
                     _lblStatus.ForeColor = Color.Green;
@@ -345,26 +347,68 @@ namespace ReactionTimeTester
 
         }
 
+        private void TestInsert(string s)
+        {
+            // Connect with sql using the connecting string
+            sqlCmd = new SqlCommand();
+            sqlCmd.Connection = sqlConn;
+
+            sqlCmd.CommandType = CommandType.StoredProcedure;
+            sqlCmd.CommandText = "TestProcedure";
+
+            // Assign username
+            SqlParameter param = new SqlParameter();
+            param.Direction = ParameterDirection.Input;
+            param.ParameterName = "@teststring";
+            param.SqlDbType = SqlDbType.NVarChar;
+            param.Value = s;
+            sqlCmd.Parameters.Add(param);
+
+            try
+            {
+                sqlCmd.ExecuteNonQuery();
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine("Error: " + err.Message);
+            }
+
+        }
 
 
         private void _tmr_Main_Tick(object sender, EventArgs e)
         {
             try
             {
+                // If nothing to read
+                if (_sPort.BytesToRead == 0)
+                    return;
+
                 // Read bytes from serial port until we have at least 17 bytes
-                while (_sPort.BytesToRead > 0 && rxBuff.Count < 17)
+                while (_sPort.IsOpen && _sPort.BytesToRead > 0 && rxBuff.Count < 17)
                     rxBuff.Add((byte)_sPort.ReadByte());
+
                 // Once we have 9 bytes, we can start to parse
-                if (rxBuff[0] != 126 || rxBuff[2] != 46 || rxBuff[7] != 46 || rxBuff[12] != 46 || rxBuff[16] != 33)
+                if (rxBuff.Count >= 17 &&
+                    (rxBuff[0] != 126 || rxBuff[2] != 46 || rxBuff[7] != 46 || rxBuff[12] != 46 || rxBuff[16] != 33))
                 {
                     rxBuff.RemoveAt(0);
                     return;
                 }
+                else if (rxBuff.Count < 17)
+                    return;
+
+
+                ASCIIEncoding encoding = new ASCIIEncoding();
+
                 // Parse the data and insert into the database
-                double rs1 = (double)(rxBuff[1] * 1000 + rxBuff[3] * 100 + rxBuff[4] * 10 + rxBuff[5]) / 1000;
-                double rs2 = (double)(rxBuff[6] * 1000 + rxBuff[8] * 100 + rxBuff[9] * 10 + rxBuff[10]) / 1000;
-                double rs3 = (double)(rxBuff[11] * 1000 + rxBuff[13] * 100 + rxBuff[14] * 10 + rxBuff[15]) / 1000;
+                double rs1 = double.Parse(encoding.GetString(rxBuff.GetRange(1, 5).ToArray()));
+                double rs2 = double.Parse(encoding.GetString(rxBuff.GetRange(6, 5).ToArray()));
+                double rs3 = double.Parse(encoding.GetString(rxBuff.GetRange(11, 5).ToArray()));
                 double avg = (rs1 + rs2 + rs3) / 3;
+
+                string s = rs1 + " " + rs2 + " " + rs3 + " " + avg;
+                Console.WriteLine(s);
 
                 // Remove the whole frame
                 for (int i = 0; i < 17; i++)
@@ -380,11 +424,11 @@ namespace ReactionTimeTester
 
 
 
-
-
-
-
         }
+
+
+
+
 
     }
 }
