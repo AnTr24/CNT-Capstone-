@@ -46,11 +46,8 @@
       </asp:GridView>
     </div>
     <div class="container">
-<<<<<<< HEAD
       <asp:Label ID="_lblUsername" runat="server" Text="Please pick a username to see the history statistics."></asp:Label>
       <asp:Label ID="_lblStats" runat="server"></asp:Label>
-=======
->>>>>>> origin/master
       <asp:SqlDataSource ID="_sdsUserHistory" runat="server" ConnectionString="<%$ ConnectionStrings:CapstoneCS %>" SelectCommand="GetUserTestHistory" SelectCommandType="StoredProcedure">
         <SelectParameters>
           <asp:ControlParameter ControlID="_gvResults" Name="username" PropertyName="SelectedValue" Type="String" />

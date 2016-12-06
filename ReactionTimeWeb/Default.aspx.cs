@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-<<<<<<< HEAD
 using System.Configuration;
 using System.Data.SqlClient;
-=======
->>>>>>> origin/master
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -20,7 +17,7 @@ public partial class _Default : System.Web.UI.Page
   protected void _gvResults_SelectedIndexChanged(object sender, EventArgs e)
   {
     string usrN = _gvResults.SelectedValue.ToString();
-<<<<<<< HEAD
+
 
     _lblUsername.Text = usrN;
     _lblUsername.Font.Size = 18;
@@ -64,8 +61,5 @@ public partial class _Default : System.Web.UI.Page
         //_lblStats.Text += "Fastest Reaction: " + string.Format("{0:F3}", reader[0]);
       }
     }
-=======
-    _gvUserHistory.Caption = usrN;
->>>>>>> origin/master
   }
 }
